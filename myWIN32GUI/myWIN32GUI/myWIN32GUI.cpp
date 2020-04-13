@@ -1,8 +1,11 @@
 // myWIN32GUI.cpp : Defines the entry point for the application.
 //
+#define _DEBUG 1
 
 #include "stdafx.h"
 #include "myWIN32GUI.h"
+#include "guicon.h"
+#include <stdio.h>
 
 #define MAX_LOADSTRING 100
 
@@ -26,6 +29,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: Place code here.
+	#ifdef _DEBUG
+		RedirectIOToConsole();
+	#endif // !_DEBUG
+	fprintf(stdout, "hey console \n");
 
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
