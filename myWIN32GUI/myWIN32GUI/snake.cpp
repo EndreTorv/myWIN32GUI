@@ -1,5 +1,11 @@
-using namespace pmr;
 #include "snake.h"
+using namespace std;
+
+bool operator==(point &left, point &right) {
+	if (left.x != right.x || left.y != right.y)
+		return false;
+	return true;
+}
 
 static struct bordersRect {
 	int upper, lower, left, right;
@@ -17,7 +23,7 @@ void set_struct(int upper, int lower, int left, int right) {
 	snakeMap.right = right;
 }
 
-static vector tail;
+static std::vector<point> tail;
 
 void move_snake() {
 	switch (direction)
@@ -26,7 +32,7 @@ void move_snake() {
 		head.y += 1;
 		break;
 	case UP:
-		head.y -= 1:
+		head.y -= 1;
 		break;
 	case LEFT:
 		head.x -= 1;
@@ -49,7 +55,7 @@ void move_snake() {
 	}
 	for (int i = 0; i < length; i++)
 	{
-		if (head == *(head + i)) {
+		if () {
 			length = 0;
 			direction = RIGHT;
 			head = { (snakeMap.right - snakeMap.left)/ 2, (snakeMake.lower - snakeMap.upper / 2 };
