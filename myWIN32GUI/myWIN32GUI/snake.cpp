@@ -1,4 +1,5 @@
 using namespace pmr;
+#include "snake.h"
 
 static struct bordersRect {
 	int upper, lower, left, right;
