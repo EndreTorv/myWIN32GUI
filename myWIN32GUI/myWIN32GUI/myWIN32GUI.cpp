@@ -4,8 +4,10 @@
 
 #include "stdafx.h"
 #include "myWIN32GUI.h"
+#include <Windows.h>
 #include "guicon.h"
 #include <stdio.h>
+#include "snake.h"
 
 #define MAX_LOADSTRING 100
 
@@ -130,7 +132,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    switch (message)
+	
+	switch (message)
     {
     case WM_COMMAND:
         {
@@ -149,12 +152,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    case WM_PAINT:
+	case WM_PAINT:
         {
-            PAINTSTRUCT ps;
+			PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Add any drawing code that uses hdc here...
-            EndPaint(hWnd, &ps);
+			hdc = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);			
+
+			RECT* rect_ptr = new RECT;
+			//*rect_ptr = { 30, 50, 1000, 2000 };
+			GetWindowRect(hWnd, rect_ptr);
+			HBRUSH brush = CreateSolidBrush(RGB(50, 151, 151));
+			fprintf(stdout, "painting window\n");
+			FillRect(hdc, rect_ptr, brush);
+			delete rect_ptr;
+			EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
