@@ -9,6 +9,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\snake">
+      <UniqueIdentifier>{0cf3a68d-e9be-4d0d-bc6a-f75b071a50fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\snake\2display">
+      <UniqueIdentifier>{3bd06b80-a75c-4bda-bcc5-906e19ac17a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\snake\game">
+      <UniqueIdentifier>{9b0977a0-9cf2-4bda-b663-af5b34a6b875}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -27,7 +36,7 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="snake.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\snake\game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,7 +50,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="snake.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\snake\game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

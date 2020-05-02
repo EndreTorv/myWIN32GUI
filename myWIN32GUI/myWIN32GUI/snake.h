@@ -1,6 +1,5 @@
 #pragma once
-#include <vector>
 enum DIR
 {
-	DOWN,	UP,	LEFT,	RIGHT
+	DOWN,	UP,	LEFT,	RIGHT,	NODIR
 } direction;
