@@ -52,6 +52,9 @@
     <ClCompile Include="snake.cpp">
       <Filter>Source Files\snake\game</Filter>
     </ClCompile>
+    <ClCompile Include="2display.cpp">
+      <Filter>Source Files\snake\2display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="myWIN32GUI.rc">

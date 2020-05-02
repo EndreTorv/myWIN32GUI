@@ -1,5 +1,8 @@
 #pragma once
-enum DIR
+static enum snake_dir
 {
 	DOWN,	UP,	LEFT,	RIGHT,	NODIR
-} direction;
+} snake_direction;
+
+void init_snake(int height, int width);
+void snake_step();

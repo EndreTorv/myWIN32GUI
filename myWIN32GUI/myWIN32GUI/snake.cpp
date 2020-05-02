@@ -17,7 +17,9 @@ bool operator==(tile &left, tile &right) {
 static int map_height, map_width;
 static tile* open_tiles;
 
-static void init_map() {
+static void init_map(int height, int width) {
+	map_height = height;
+	map_width = width;
 	open_tiles = new tile[map_height*map_width];
 }
 static void reset_map() {
@@ -25,9 +27,7 @@ static void reset_map() {
 	open_tiles = new tile[map_height*map_width];
 }
 
-
 static std::list<tile> tail;
-
 static int tail_length = 0;
 
 static void replace_apple() {
@@ -36,9 +36,9 @@ static void replace_apple() {
 }
 
 
-void init_snake() {
-	srand(time(NULL));
-	init_map();
+void init_snake(int height, int width) {
+	srand((unsigned int)time(NULL));
+	init_map(height, width);
 }
 
 static void add_open_tile(tile addingTile){
@@ -63,13 +63,13 @@ static void remove_open_tile(tile removingTile){
 
 static void reset_game() {
 	tail.erase(tail.begin(), tail.end());
-	direction = NODIR;
+	snake_direction = NODIR;
 	head = {  map_height/2, map_width/2 };
 	tail_length = 0;
 }
 
 void snake_step() {
-	switch (direction)
+	switch (snake_direction)
 	{
 	case DOWN:
 		head.y += 1;
