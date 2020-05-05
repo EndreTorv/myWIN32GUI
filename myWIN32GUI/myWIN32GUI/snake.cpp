@@ -1,12 +1,7 @@
 #include "snake.h"
-#include <list>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
-static struct tile
-{
-	int y, x;
-} head, apple;
 
 bool operator==(tile &left, tile &right) {
 	if (left.x != right.x || left.y != right.y)
@@ -14,36 +9,47 @@ bool operator==(tile &left, tile &right) {
 	return true;
 }
 
-static int map_height, map_width;
 static tile* open_tiles;
+static tile head, apple;
 
-static void init_map(int height, int width) {
-	map_height = height;
-	map_width = width;
-	open_tiles = new tile[map_height*map_width];
+static void reset_tiles() {
+	for (int h = 0; h < get_map_height(); h++)
+	{
+		for (int w = 0; w < get_map_width(); w++)
+		{
+			open_tiles[h*w] = tile(h, w);
+			paint(open_tiles[h*w], WHITE);
+		}
+	}
 }
-static void reset_map() {
-	delete[] open_tiles;
-	open_tiles = new tile[map_height*map_width];
+static void init_map() {
+	fprintf(stdout, "initing map..\n");
+	open_tiles = new tile[get_map_height()*get_map_width()];
+	reset_tiles();
 }
 
 static std::list<tile> tail;
-static int tail_length = 0;
+static int tail_length = 1;
 
 static void replace_apple() {
-	int open_tile_index = rand() % (map_height*map_width - tail_length);
+	int open_tile_index = rand() % (get_map_height()*get_map_width() - tail_length);
 	apple = open_tiles[open_tile_index];
+	paint(apple, RED);
 }
 
-
-void init_snake(int height, int width) {
+void init_snake(HWND* hWnd, int height, int width) {
+	fprintf(stdout, "initing snake..\n");
 	srand((unsigned int)time(NULL));
-	init_map(height, width);
+	set_map_dims(height, width);
+	set_hwnd(hWnd);
+	set_template_tile_rect();
+	//init_map();
 }
 
 static void add_open_tile(tile addingTile){
 	open_tiles[tail_length] = addingTile;
 	tail_length++;
+	paint(addingTile, WHITE);
 }
 static void remove_open_tile(tile removingTile){
 	//Search tile
@@ -59,17 +65,24 @@ static void remove_open_tile(tile removingTile){
 	//shrink open_tiles
 	open_tiles[removingTile_index] = open_tiles[tail_length];
 	tail_length--;
+	paint(removingTile, BLACK);
 }
 
 static void reset_game() {
-	tail.erase(tail.begin(), tail.end());
-	snake_direction = NODIR;
-	head = {  map_height/2, map_width/2 };
-	tail_length = 0;
+	fprintf(stdout, "tail.erase() \n");
+	//tail.erase(tail.begin(), tail.end());
+	for (std::list<tile>::reverse_iterator it = tail.rbegin(); it != tail.rend(); ++it)
+	{
+		tail.pop_back();
+	}
+	set_snake_direction(NODIR);
+	head = {  get_map_height()/2, get_map_width()/2 };
+	tail_length = 1;
+	paint_canvas();
 }
 
-void snake_step() {
-	switch (snake_direction)
+int snake_step() {
+	switch (get_snake_direction())
 	{
 	case DOWN:
 		head.y += 1;
@@ -88,16 +101,21 @@ void snake_step() {
 	}
 	
 	//Check within borders
-	if ((head.y < 0) || (head.y >= map_height) || (head.x < 0) || (head.x >= map_width)) {
+	if ((head.y < 0) || (head.y >= get_map_height()) || (head.x < 0) || (head.x >= get_map_width())) {
 		reset_game();
-		return;
+		return -1;
 	}
 	//check if head crash with tail
-	for (std::list<tile>::iterator it = tail.begin(); it != tail.end(); ++it)
+	fprintf(stdout, "for loop tail \n");
+	fprintf(stdout, "tail.begin() \n");
+	tail.begin();
+	fprintf(stdout, "for loop tail \n");
+	for (std::list<tile>::iterator it = tail.begin(); it != tail.end(); it++)
 	{
+		fprintf(stdout, "for loop tail \n");
 		if (head == *it) {
 			reset_game();
-			return;
+			return -1;
 		}
 	}
 	
@@ -110,11 +128,12 @@ void snake_step() {
 	}
 	else
 	{
-		add_open_tile(tail.back());
+		add_open_tile(tail.back());		// HER
 		tail.pop_back();
 		remove_open_tile(head);
 		tail.push_front(head);
 	}
+	return 1;
 }
 
 

@@ -147,7 +147,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="2display.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="guicon.h" />
+    <ClInclude Include="myWindowsUtilities.h" />
     <ClInclude Include="myWIN32GUI.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="snake.h" />
@@ -156,7 +159,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="2display.cpp" />
+    <ClCompile Include="common.cpp" />
     <ClCompile Include="guicon.cpp" />
+    <ClCompile Include="myWindowsUtilities.cpp" />
     <ClCompile Include="myWIN32GUI.cpp" />
     <ClCompile Include="snake.cpp" />
     <ClCompile Include="stdafx.cpp">

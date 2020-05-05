@@ -12,12 +12,6 @@
     <Filter Include="Source Files\snake">
       <UniqueIdentifier>{0cf3a68d-e9be-4d0d-bc6a-f75b071a50fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\snake\2display">
-      <UniqueIdentifier>{3bd06b80-a75c-4bda-bcc5-906e19ac17a8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\snake\game">
-      <UniqueIdentifier>{9b0977a0-9cf2-4bda-b663-af5b34a6b875}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -36,7 +30,16 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="snake.h">
-      <Filter>Source Files\snake\game</Filter>
+      <Filter>Source Files\snake</Filter>
+    </ClInclude>
+    <ClInclude Include="2display.h">
+      <Filter>Source Files\snake</Filter>
+    </ClInclude>
+    <ClInclude Include="myWindowsUtilities.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Source Files\snake</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -50,10 +53,16 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="snake.cpp">
-      <Filter>Source Files\snake\game</Filter>
+      <Filter>Source Files\snake</Filter>
     </ClCompile>
     <ClCompile Include="2display.cpp">
-      <Filter>Source Files\snake\2display</Filter>
+      <Filter>Source Files\snake</Filter>
+    </ClCompile>
+    <ClCompile Include="myWindowsUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>Source Files\snake</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

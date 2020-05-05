@@ -1,8 +1,10 @@
 #pragma once
-static enum snake_dir
-{
-	DOWN,	UP,	LEFT,	RIGHT,	NODIR
-} snake_direction;
+#include <list>
+#include "common.h"
+#include "2display.h"
 
-void init_snake(int height, int width);
-void snake_step();
+
+
+void set_snake_direction(snake_dir);
+void init_snake(HWND* hWnd, int height, int width);
+int snake_step(); // returns -1 if the snake crashes, returns 1 otherwise

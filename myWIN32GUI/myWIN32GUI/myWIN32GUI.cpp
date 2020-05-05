@@ -15,6 +15,8 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+HWND hWnd;
+
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -48,8 +50,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_MYWIN32GUI));
-
     MSG msg;
+
+	//Initiate snake
+	init_snake(&hWnd, 100, 100);
+	
 
     // Main message loop:
     while (GetMessage(&msg, nullptr, 0, 0))
@@ -78,14 +83,14 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
+    wcex.lpfnWndProc    = (WNDPROC)WndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
     wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_MYWIN32GUI));
     wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_MYWIN32GUI);
+	wcex.lpszMenuName = 0;
     wcex.lpszClassName  = szWindowClass;
     wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -106,7 +111,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+   hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
@@ -132,9 +137,72 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	
+	static int red = 0;
+	static int green = 0;
+	static int blue = 125;
+	static bool paint_flag = 0;
+	if (red < 0 || red > 255)
+		red = 0;
+	if (green < 0 || green > 255)
+		green = 0;
+	static tile myTile(0, 0);
+
 	switch (message)
     {
+
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_LEFT:
+
+			// Process the LEFT ARROW key. 
+			set_snake_direction(LEFT);
+			fprintf(stdout, "button push:	LEFT\n");
+			red -= 20;
+			myTile.x -= 5;
+			break;
+
+		case VK_RIGHT:
+
+			// Process the RIGHT ARROW key. 
+			set_snake_direction(RIGHT);
+			fprintf(stdout, "button push:	RIGHT\n");
+			red += 20;
+			myTile.x += 5;
+			break;
+
+		case VK_UP:
+
+			// Process the UP ARROW key. 
+			set_snake_direction(UP);
+			fprintf(stdout, "button push:	UP\n");
+			green += 20;
+			myTile.y -= 5;
+			break;
+
+		case VK_DOWN:
+			set_snake_direction(DOWN);
+			// Process the DOWN ARROW key. 
+			fprintf(stdout, "button push:	DOWN\n");
+			green -= 20;
+			myTile.y += 5;
+			break;
+		default:
+			break;
+		}
+		//prolly remove !
+		fprintf(stdout, "DIRECTION: %d\n", (int)get_snake_direction());
+		paint_flag = true;
+		paint(myTile, BLACK);
+		if (UpdateWindow(hWnd))
+		{
+			fprintf(stdout, "UpdateWindow failed,	update region empty?\n");
+		}
+		
+		//snake_step();
+		break;
+
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -154,20 +222,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 	case WM_PAINT:
         {
-			PAINTSTRUCT ps;
+		if (paint_flag)
+		{
+			fprintf(stdout, "painting ..\n");
+		}
+
+		/*
+		PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Add any drawing code that uses hdc here...
-			hdc = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);			
+			//hdc = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);			
 
-			RECT* rect_ptr = new RECT;
-			//*rect_ptr = { 30, 50, 1000, 2000 };
-			GetWindowRect(hWnd, rect_ptr);
-			HBRUSH brush = CreateSolidBrush(RGB(50, 151, 151));
-			fprintf(stdout, "painting window\n");
-			FillRect(hdc, rect_ptr, brush);
-			delete rect_ptr;
+			
+			RECT* rect_canvas = new RECT;
+			RECT* my_rect = new RECT;
+			*my_rect = { 1, 1, 5, 5 };
+			GetClientRect(hWnd, rect_canvas);
+			SetMapMode(hdc, MM_ANISOTROPIC);
+			SetWindowExtEx(hdc, 100, 100, NULL);
+			SetViewportExtEx(hdc, rect_canvas->right, rect_canvas->bottom, NULL);
+			HBRUSH brush_bckgnd = CreateSolidBrush(RGB(255, 255, 255));
+			HBRUSH brush_white = CreateSolidBrush(RGB(red, green, blue));
+			fprintf(stdout, "left:	%i,	top:	%i,	right:	%i,	bottom:	%i\n",	rect_canvas->left, rect_canvas->top, rect_canvas->right, rect_canvas->bottom);
+			FillRect(hdc, rect_canvas, brush_bckgnd);
+			
+			FillRect(hdc, my_rect, brush_white);
+
+			// Free handles/resources
+			DeleteObject(brush_bckgnd);
+			DeleteObject(brush_white);
+			delete rect_canvas;
+			delete my_rect;
 			EndPaint(hWnd, &ps);
-        }
+			*/
+		}
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
