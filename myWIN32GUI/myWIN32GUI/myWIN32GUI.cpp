@@ -146,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (green < 0 || green > 255)
 		green = 0;
 	static tile myTile(0, 0);
-
+	static int timerID = 1;
 	switch (message)
     {
 
@@ -159,7 +159,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			set_snake_direction(LEFT);
 			fprintf(stdout, "button push:	LEFT\n");
 			red -= 20;
-			myTile.x -= 5;
+			myTile.x -= 1;
 			break;
 
 		case VK_RIGHT:
@@ -168,7 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			set_snake_direction(RIGHT);
 			fprintf(stdout, "button push:	RIGHT\n");
 			red += 20;
-			myTile.x += 5;
+			myTile.x += 1;
 			break;
 
 		case VK_UP:
@@ -177,92 +177,81 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			set_snake_direction(UP);
 			fprintf(stdout, "button push:	UP\n");
 			green += 20;
-			myTile.y -= 5;
+			myTile.y -= 1;
 			break;
 
 		case VK_DOWN:
+
 			set_snake_direction(DOWN);
 			// Process the DOWN ARROW key. 
 			fprintf(stdout, "button push:	DOWN\n");
 			green -= 20;
-			myTile.y += 5;
+			myTile.y += 1;
 			break;
+
 		default:
 			break;
 		}
 		//prolly remove !
 		fprintf(stdout, "DIRECTION: %d\n", (int)get_snake_direction());
-		paint_flag = true;
-		paint(myTile, BLACK);
-		if (UpdateWindow(hWnd))
+		//paint_flag = true;
+		//paint(myTile, BLACK);
+		/*if (UpdateWindow(hWnd))
 		{
 			fprintf(stdout, "UpdateWindow failed,	update region empty?\n");
-		}
+		}*/
 		
 		//snake_step();
 		break;
 
 
-    case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
 	case WM_PAINT:
-        {
-		if (paint_flag)
-		{
-			fprintf(stdout, "painting ..\n");
-		}
-
-		/*
 		PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: Add any drawing code that uses hdc here...
-			//hdc = CreateDC(TEXT("DISPLAY"), NULL, NULL, NULL);			
+		BeginPaint(hWnd, &ps);
 
-			
-			RECT* rect_canvas = new RECT;
-			RECT* my_rect = new RECT;
-			*my_rect = { 1, 1, 5, 5 };
-			GetClientRect(hWnd, rect_canvas);
-			SetMapMode(hdc, MM_ANISOTROPIC);
-			SetWindowExtEx(hdc, 100, 100, NULL);
-			SetViewportExtEx(hdc, rect_canvas->right, rect_canvas->bottom, NULL);
-			HBRUSH brush_bckgnd = CreateSolidBrush(RGB(255, 255, 255));
-			HBRUSH brush_white = CreateSolidBrush(RGB(red, green, blue));
-			fprintf(stdout, "left:	%i,	top:	%i,	right:	%i,	bottom:	%i\n",	rect_canvas->left, rect_canvas->top, rect_canvas->right, rect_canvas->bottom);
-			FillRect(hdc, rect_canvas, brush_bckgnd);
-			
-			FillRect(hdc, my_rect, brush_white);
+		EndPaint(hWnd, &ps);
 
-			// Free handles/resources
-			DeleteObject(brush_bckgnd);
-			DeleteObject(brush_white);
-			delete rect_canvas;
-			delete my_rect;
-			EndPaint(hWnd, &ps);
-			*/
-		}
+
         break;
+	case WM_TIMER:
+		fprintf(stdout, "WM_TIMER\n");
+		snake_step();
+		break;
+	case WM_CREATE:
+		fprintf(stdout, "WM_CREATE\n");
+
+		// Start the timer.  
+
+		if (1 == SetTimer(hWnd, timerID, 100, (TIMERPROC)NULL)) {
+			fprintf(stdout, "Setting timer WORKED\n");
+		}
+
+		break;
+	case WM_COMMAND:
+	{
+		int wmId = LOWORD(wParam);
+		// Parse the menu selections:
+		switch (wmId)
+		{
+		case IDM_ABOUT:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			break;
+		case IDM_EXIT:
+			DestroyWindow(hWnd);
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
+	}
+	break;
     case WM_DESTROY:
+		KillTimer(hWnd, timerID);
         PostQuitMessage(0);
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
+	fprintf(stdout, "msg: %d\n", message);
     return 0;
 }
 

@@ -150,6 +150,7 @@
     <ClInclude Include="2display.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="guicon.h" />
+    <ClInclude Include="message2string.h" />
     <ClInclude Include="myWindowsUtilities.h" />
     <ClInclude Include="myWIN32GUI.h" />
     <ClInclude Include="Resource.h" />

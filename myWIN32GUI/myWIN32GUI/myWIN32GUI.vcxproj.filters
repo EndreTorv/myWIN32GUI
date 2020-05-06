@@ -41,6 +41,9 @@
     <ClInclude Include="common.h">
       <Filter>Source Files\snake</Filter>
     </ClInclude>
+    <ClInclude Include="message2string.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

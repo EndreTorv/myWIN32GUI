@@ -1,7 +1,8 @@
 #include "2display.h"
+#define TILE_SIZE 10
 
 static HWND* local_hWnd;
-static RECT template_tile_rect;// = { 0, 0, 100, 100 };
+static const RECT template_tile_rect = { 0, 0, TILE_SIZE, TILE_SIZE };
 
 void set_hwnd(HWND* hWnd) {
 	fprintf(stdout, "Setting hwnd.. \n");
@@ -9,27 +10,19 @@ void set_hwnd(HWND* hWnd) {
 }
 void set_template_tile_rect() {
 	fprintf(stdout, "setting tile template dims	");
-	template_tile_rect = { 0, 0, X_METRIC / (get_map_width()), Y_METRIC / (get_map_height()) };
 	fprintf(stdout, "template.x = %d	template.y = %d	\n\n", template_tile_rect.right, template_tile_rect.bottom);
 }
 
 void paint(tile t, tile_color tc) {
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(*local_hWnd, &ps);
+	HDC hdc = GetDC(*local_hWnd);
 	RECT* rect_canvas = new RECT;
 	RECT* tile_rect = new RECT;
-	tile_rect->left = template_tile_rect.left + t.x;
-	tile_rect->top = template_tile_rect.top + t.y;
-	tile_rect->right = template_tile_rect.right + t.x;
-	tile_rect->bottom = template_tile_rect.bottom + t.y;
-	fprintf(stdout, "painting rectangle.. \n");
-	fprintf(stdout, "	..top:	%d	right:	%d\n", tile_rect->top, tile_rect->right);
-	fprintf(stdout, "	..left:	%d	button:	%d\n", tile_rect->left, tile_rect->bottom);
+	tile_rect->left = template_tile_rect.left + t.x*TILE_SIZE;
+	tile_rect->top = template_tile_rect.top + t.y*TILE_SIZE;
+	tile_rect->right = template_tile_rect.right + t.x*TILE_SIZE;
+	tile_rect->bottom = template_tile_rect.bottom + t.y*TILE_SIZE;
 
 	GetClientRect(*local_hWnd, rect_canvas);
-	SetMapMode(hdc, MM_ANISOTROPIC);
-	SetWindowExtEx(hdc, Y_METRIC, X_METRIC, NULL);
-	SetViewportExtEx(hdc, rect_canvas->right, rect_canvas->bottom, NULL);
 	HBRUSH brush; 
 	switch (tc)
 	{
@@ -52,16 +45,18 @@ void paint(tile t, tile_color tc) {
 	// Free handles/resources
 	DeleteObject(brush);
 	delete tile_rect;
-	EndPaint(*local_hWnd, &ps);
+	ReleaseDC(*local_hWnd, hdc);
 
 }
 
-void paint_canvas() {
-	for (int h = 0; h < get_map_height(); h++)
+void paint_map(tile open_tiles[], int tail_length, std::list<tile> snake, tile apple) {
+	for (int i = 0; i < (get_map_height()*get_map_width()-tail_length); i++)
 	{
-		for (int w = 0; w < get_map_width(); w++)
-		{
-			paint(tile(h,w), WHITE);
-		}
+		paint(open_tiles[i], WHITE);
+	}
+	paint(apple, RED);
+	for (std::list<tile>::reverse_iterator it = snake.rbegin(); it != snake.rend(); ++it)
+	{
+		paint(*it, BLACK);
 	}
 }

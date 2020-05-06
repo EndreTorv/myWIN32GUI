@@ -1,5 +1,5 @@
 #pragma once
-
+#include <list>
 #include "stdafx.h"
 #include "myWIN32GUI.h"
 #include <Windows.h>

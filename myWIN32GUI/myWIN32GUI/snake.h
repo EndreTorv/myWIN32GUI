@@ -1,5 +1,5 @@
 #pragma once
-#include <list>
+
 #include "common.h"
 #include "2display.h"
 
