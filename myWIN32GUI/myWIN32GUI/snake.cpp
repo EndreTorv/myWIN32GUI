@@ -10,7 +10,7 @@ bool operator==(tile &left, tile &right) {
 }
 
 static tile* open_tiles;
-static int end_open_tiles;
+static int open_tiles_end;
 static tile head, apple;
 
 static void reset_tiles() {
@@ -23,7 +23,7 @@ static void reset_tiles() {
 			paint(open_tiles[index], WHITE);
 		}
 	}
-	end_open_tiles = get_map_width() * get_map_height();
+	open_tiles_end = get_map_width() * get_map_height();
 }
 
 static void init_map() {
@@ -36,8 +36,7 @@ static std::list<tile> tail;
 static int tail_length = 1;
 
 static void replace_apple() {
-	int open_tile_index = rand() % (end_open_tiles);
-	apple = open_tiles[open_tile_index];
+	apple = open_tiles[rand() % (open_tiles_end)];
 	paint(apple, RED);
 }
 
@@ -48,18 +47,19 @@ void init_snake(HWND* hWnd, int height, int width) {
 	set_hwnd(hWnd);
 	set_template_tile_rect();
 	init_map();
+	
 }
 
 static void add_open_tile(tile addingTile){
-	open_tiles[end_open_tiles] = addingTile;
-	end_open_tiles++;
+	open_tiles[open_tiles_end] = addingTile;
+	open_tiles_end++;
 	tail_length--;
 	paint(addingTile, WHITE);
 }
 static void remove_open_tile(tile removingTile){
 	//Search tile
 	int removingTile_index = -1;
-	for (int i = 0; i < end_open_tiles; i++)
+	for (int i = 0; i < open_tiles_end; i++)
 	{
 		if (open_tiles[i] == removingTile)
 		{
@@ -75,8 +75,8 @@ static void remove_open_tile(tile removingTile){
 		}
 	}
 	//shrink open_tiles
-	open_tiles[removingTile_index] = open_tiles[end_open_tiles];
-	end_open_tiles--;
+	open_tiles[removingTile_index] = open_tiles[open_tiles_end-1];
+	open_tiles_end--;
 	tail_length++;
 	paint(removingTile, BLACK);
 }
@@ -136,18 +136,17 @@ int snake_step() {
 	//Progress game
 	if ((head == apple) || (tail_length == 1))
 	{
-
 		fprintf(stdout, "eating..	");
 		replace_apple();
 		remove_open_tile(head);
-		tail.push_back(head);
+		tail.push_front(head);
 	}
 	else
 	{
 		fprintf(stdout, "moving..	");
 		remove_open_tile(head);
 		tail.push_front(head);
-		add_open_tile(tail.back());		// HER
+		add_open_tile(tail.back());
 		fprintf(stdout, "adding tile	y= %d,	x=%d", tail.back().y, tail.back().x);
 		tail.pop_back();
 		
